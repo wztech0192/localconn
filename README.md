@@ -1,4 +1,4 @@
-# localconn
+# Local Conn
 Control your PC's keyboard, mouse, and cmd via the browser dashboard! The connection is established locally thourgh LAN.
 
 ## Dependency
