@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>LocalConn</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <link rel="shortcut icon" type="image/png" href="./conn.ico"/>
+        <style>
+            html,body{
+                overflow:hidden;
+            }
+            #leftjoy{
+                width:49%;
+                height:150px;
+                position:relative;
+                background-color:transparent;
+                box-shadow:inset 0px 0px 50px 50px rgba(100,100,100,0.4);
+                z-index:99;
+                border-radius:10px;
+            }
+            code{
+                font-size:10px;
+            }
+            .joybar{
+                display:none;
+                position:absolute;
+                width:30px;
+                height:30px;
+                border-radius:100%;
+                background-color: rgba(30,30,30,0.5);
+            }
+
+            .click{
+                -webkit-appearance: none;
+                padding: 25px 0;
+                border-radius:5px;
+                margin:0;
+                font-size:20px;
+                width:90%;
+                box-shadow: inset 0px 0px 10px 1px gray;
+            }
+
+            #leftclick{
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+            }
+            #rightclick{
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                border-top:0;
+            }
+
+            #send_cmd{
+                float:right;
+                -webkit-appearance: none;
+                padding: 20px 0;
+                width:20%;
+                border-radius:5px;
+            }
+            .btn {
+                text-align: center;
+                border:1px outset lightgray;
+                touch-action: manipulation;
+                user-select: none;
+                -moz-user-select: none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+                -o-user-select: none;
+            }
+            .btn:active{
+                background:lightgray;
+            }
+            #keyboard{
+                height:30px;margin:0 auto; 
+                margin-top:10px; 
+                display:block; 
+                width:90%;
+                text-align:center;
+                font-size:24px
+            }
+            #keyboard:focus{
+                height:0;
+                font-size:0;
+                border:none;
+            }
+            #cmd{
+                min-height:60px; 
+                width:75%; 
+                background:black; 
+                color:white;
+            }
+            #output{
+                background:black; 
+                color:white; 
+                min-height:120px; 
+                width:100%;
+            }
+            #toggle{
+                float:right;
+                -webkit-appearance: none; 
+                padding:10px;
+                border-radius:5px;
+                background:lightgray;
+            }
+            #centerP{
+                display:none;
+                position:absolute;
+                width:10px;
+                height:10px;
+                margin-left:10px;
+                margin-top:10px;
+                border-radius:100%;
+                box-shadow: 0px 0px 5px 5px gray;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <button id="toggle">Toggle Connection</button>
+
+            <label>IP Address:</label>&nbsp;<input type="text" id="ip" placeholder="***Enter IP Here***">
+            <br>
+            <label>Connection: </label><span id="conn" style="color:red"> OFF </span>
+        </div>
+        <hr>
+        <div>
+            <label>Output</label>
+            <textarea id="output" readonly></textarea>
+        </div>
+        <hr>
+        <div>
+            <div>
+                <button id="exit">
+                    Release Target
+                </button>
+                <button id="tcw" style="float:right">
+                    Toggle Console Window
+                </button>
+                <br>
+                <input type="text" id="cmd-title"  placeholder="cmd title, i.g.cd" style="background:black;color:white;">
+                <button id="lock" style="float:right">
+                    Lock/Unlock Target     
+                </button>
+                <br>
+            </div>
+            <textarea spellcheck="false" placeholder="cmd:" id="cmd"></textarea>
+            <div class="btn" id="send_cmd">Send</div>
+        </div>
+        <hr>
+        <br>
+        <div>
+            <div id="mousepanel">
+                <div style="float:right; width:50%;">
+                    <div id="leftclick" class="click btn">LEFT CLICK</div>
+                    <div id="rightclick" class="click btn">RIGHT CLICK</div>
+                </div>
+                <div id="leftjoy" class="leftj"><span class="joybar leftj"></span>
+                    <span id="centerP"></span></div>
+                <input type="text" placeholder="Active Keyboard" id="keyboard">
+            </div>
+        </div>
+        <script>
+            
+            var port = ":1998/";
+
+            var ws = null;
+            var lblConn = document.getElementById('conn');
+            var lblTarget = document.getElementById('target');
+            var cmd = document.getElementById('cmd');
+            var cmdTitle = document.getElementById('cmd-title');
+            var output_field = document.getElementById('output');
+            var leftjoy = document.getElementById('leftjoy');
+            var centerP = document.getElementById('centerP');
+            var ipInput = document.getElementById('ip');
+
+            ipInput.value =  getCookie('ip');
+            
+         
+
+            ipInput.onchange = function(){
+                document.cookie = "ip=" + (this.value)  + "; path=/";
+            }
+
+            function getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0;i < ca.length;i++) {
+                    var c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+
+
+            document.getElementById('toggle').onclick = function () {
+                if (ws === null) {
+                    var ip = ipInput.value;
+                    if( ip==='') return alert("IP cannot be empty");
+                    ws = new WebSocket('ws://'+ip+port);
+                    output("Connecting...............");
+                    startConn();
+                } else {
+                    ws.close();
+                    ws = null;
+                    toggleConn(lblConn, "OFF");
+                }
+            };
+
+            document.getElementById('send_cmd').addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                var val = (cmdTitle.value === "" ? "" : (cmdTitle.value + "\n")) + cmd.value;
+                cmd.value = "";
+                send('cmd&' + val); //send method
+                output(val);
+            },false);
+
+            document.getElementById('tcw').addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                send('cmd&TOGGLE');
+                output("***TOGGLE Console Window***");
+            }, false);
+
+            document.getElementById('exit').addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                var confirm = window.confirm("Do you want to release target?");
+                if (confirm) {
+                    send('cmd&EXIT');
+                    output("***RELEASE TARGET***");
+                }
+            }, false);
+
+            document.getElementById('lock').addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                send('cmd&LOCK');
+                output("***TOGGLE LOCK***");
+            }, false);
+
+            document.getElementById('leftclick').addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                send('mc&left');
+            }, false);
+
+            document.getElementById('rightclick').addEventListener('touchstart', function (e) {
+                e.preventDefault();
+                send('mc&right');
+            }, false);
+               document.getElementById('leftclick').addEventListener('touchend', function (e) {
+                e.preventDefault();
+                send('me&left');
+            }, false);
+
+            document.getElementById('rightclick').addEventListener('touchend', function (e) {
+                e.preventDefault();
+                send('me&right');
+            }, false);
+
+
+            document.getElementById('keyboard').onkeyup = function (e) {
+                var key;
+                switch (e.keyCode) {
+                    case 13:
+                        key = "{ENTER}";
+                        break;
+                    case 8:
+                        key = "{BACKSPACE}";
+                        break;
+                    case 27:
+                        key = "{ESC}";
+                        break;
+                    default :
+                        key = this.value;
+                }
+                this.value = "";
+
+                send('ky&' + key);
+            };
+            
+            function send(data) {
+                if (ws !== null) {
+                    ws.send(data); //send method
+                }
+            }
+
+            function output(data) {
+                output_field.value += data + "\n";
+                output_field.scrollTop = output_field.scrollHeight;
+            }
+
+            function startConn() {
+                //start handshake
+                ws.onopen = function (e) {
+                    console.log("connection established");
+                    output("connected!");
+                    
+                }; //on open event
+
+                ws.onclose = function (e) {
+                    output("disconnected!");
+                    console.log("connection close");
+                }; //on close event
+
+                ws.onmessage = function (msg) {
+                    if (msg.data !== undefined && msg.data !== '') {
+                        var data = msg.data.split('&');
+                        switch (data[0]) {
+                            case 'status':
+                                toggleConn(lblConn, data[1]);
+                                break;
+           
+                            case 'cmd':
+                            case 'b':
+                                output(data[1]);
+                                break;
+                        }
+                    }
+                };
+
+                ws.onerror = function () {
+                    output("Connection Fail!");
+                    toggleConn(lblConn, 'OFF');
+                    ws = null;
+                }; //on error event
+            }
+
+            function toggleConn(lbl, status) {
+                if (status === 'ON') {
+                    lbl.style.color = "green";
+                } else {
+                    lbl.style.color = "red";
+                }
+                lbl.textContent = status;
+            }
+
+            function setJoyPos(joy, x, y) {
+                var dx = x - point.x;
+                var dy = y - point.y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var rad = Math.atan2(dx, dy);
+                joy.style.marginLeft = x + 'px';
+                joy.style.marginTop = y + 'px';
+                speed = Math.ceil(dist / 6);
+                return rad;
+            }
+
+            var touch;
+            var angle = 0;
+            var speed = 0;
+            var point = {};
+
+            leftjoy.addEventListener('touchstart', function (e) {
+                touchMove(e, this.firstChild);
+                this.firstChild.style.display = 'block';
+                centerP.style.display = 'block';
+                touch = setInterval(function () {
+                    send("mm&" + angle + "&" + speed);
+                }, 15);
+            }, false);
+
+            leftjoy.addEventListener('touchmove', touchMove, false);
+            leftjoy.addEventListener('touchend', function (e) {
+                e.preventDefault();
+                clearInterval(touch);
+                this.firstChild.style.display = 'none';
+                centerP.style.display = 'none';
+            }, false);
+
+            function touchMove(e, child) {
+                e.preventDefault();
+                var touch = e.changedTouches[0];
+                var relX = touch.pageX - leftjoy.offsetLeft - 15;
+                var relY = touch.pageY - leftjoy.offsetTop - 15;
+                if (child) {
+                    point.x = relX;
+                    point.y = relY;
+                    centerP.style.marginLeft = point.x + "px";
+                    centerP.style.marginTop = point.y + "px";
+                }
+                angle = Math.round(setJoyPos(this.firstChild || child, relX, relY) * 180 / Math.PI - 90);
+                //  absAng = Math.abs(angle);
+                if (angle < 0) {
+                    angle += 360;
+                }
+            }
+        </script>
+    </body>
+</html>
