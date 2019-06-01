@@ -1,0 +1,165 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Jun 1, 2019, 5:51:10 PM
+    Author     : Wei Zheng
+*/
+
+html,body{
+    overflow:hidden;
+    margin:0;
+    padding:0;
+}
+#mousepanel{
+    height: 45%;
+    position: absolute;
+    width: 100%;
+}
+#leftjoy{
+    width:70%;
+    height:calc(100% - 30px);
+    position:relative;
+    background-color:transparent;
+    box-shadow:inset 0px 0px 50px 50px rgba(180,180,180,0.4);
+    z-index:99;
+    border:none;
+    border-radius:0;
+}
+code{
+    font-size:10px;
+}
+#joybar{
+    left:0;
+    top:0;
+    position:absolute;
+    display:none;
+    width:30px;
+    height:30px;
+    border-radius:100%;
+    background-color: rgba(30,30,30,0.5);
+}
+
+.click{
+    border:none;
+    padding: 0;
+    height:50%;
+    font-size:20px;
+    width:100%;
+    border-radius:0;
+    box-shadow:inset 0px 0px 19px 10px rgba(200,200,200,0.4);
+}
+
+.btn {
+    text-align: center;
+    border:1px outset lightgray;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+}
+
+.mdc-button{
+    color:black !important;
+}  
+
+.mdc-button--outlined{
+    border-color:gray !important;
+}
+.mdc-button::before, .mdc-button::after{
+    background-color:black !important;
+}
+
+#keyboard{
+    -moz-box-sizing:    border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing:        border-box;
+    height:30px;
+    width:100%;
+    text-align:center;
+    font-size:20px;
+    color:black;
+    border-bottom:none;
+
+}
+
+#keyboard::placeholder {
+    color:black;
+}
+
+#keyboard:focus{
+    display:none;
+}   
+
+.sidebtn{
+    -webkit-appearance: none; 
+    width:24%;
+    font-size:6px !important;
+    min-height:20px;
+    display:inline-block;
+    border-radius:5px;
+    margin:5px 0;
+    font-weight:bold;
+    background:rgba(200,200,200,0.5) !important;
+}
+
+#cmd-title{
+    width:100%;
+    margin:0;
+    box-sizing: border-box;
+    border-radius:5px;
+}
+#send_cmd{
+    float:right;
+    -webkit-appearance: none;
+    padding: 44px 0;
+    font-size:16px;
+
+    width:20%;
+    border-radius:5px;
+    box-sizing: border-box;
+}
+#cmd{
+    min-height:68px; 
+    width:100%;
+    background:black; 
+    color:white;
+    border-radius:5px;
+    box-sizing: border-box;
+}
+#output{
+    background:black; 
+    color:white; 
+    min-height:120px; 
+    width:100%;
+    border-radius:5px;
+}
+#toggle{
+    float:right;
+}
+#centerP{
+    left:0;
+    top:0;
+    display:none;
+    width:10px;
+    height:10px;
+    border-radius:100%;
+    position:absolute;
+    box-shadow: 0px 0px 5px 5px gray;
+}
+#modeback{
+    text-align:center;
+    display:none;
+    width:100%;
+    top:0;
+    height:5%;
+    left:0;
+    border-top:none;
+}
+#mclick{
+    float:right; 
+    width:30%;   
+    height:calc(100% - 30px);
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>LocalConn</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <link rel="shortcut icon" type="image/png" href="./conn.ico"/>
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        <link href="./style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div id='cmdpanel'>
+            <div>
+                <button id="toggle">Toggle Connection</button>
+                <label>Connection: </label><span id="conn" style="color:red"> OFF </span>
+            </div>
+            <hr>
+            <div>
+                <label>Output</label>
+                <textarea id="output" readonly></textarea>
+            </div>
+            <div>
+                <div style="width:100%;">
+                    <button id="exit" class="sidebtn mdc-button mdc-button--outlined">
+                        Release Target
+                    </button>
+
+                    <button id="tcw" class="sidebtn mdc-button mdc-button--outlined">
+                        Toggle Console
+                    </button>
+                    <button id="lock" class="sidebtn mdc-button mdc-button--outlined" >
+                        Lock/Unlock
+                    </button>
+                    <button id="mousemode" class="sidebtn mdc-button mdc-button--outlined" >
+                        Toggle Mode
+                    </button>
+                </div>
+                <div style=" width:80%; float:left;">
+                    <input type="text" id="cmd-title"  placeholder="cmd title, i.g.cd" style="background:black;color:white;">
+                    <textarea spellcheck="false" placeholder="cmd:" id="cmd"></textarea>
+                </div>
+                <div class="btn mdc-button  mdc-button--outlined " id="send_cmd">Send</div>
+            </div>
+            <hr>
+        </div>
+        <div id="modeback" class="mdc-button mdc-button--outlined">Back</div>
+        <div id="mousepanel" >
+            <div id="mclick">
+                <div id="leftclick" class="click mdc-button mdc-button--outlined ">LC</div>
+                <div id="rightclick" class="click mdc-button mdc-button--outlined">RC</div>
+            </div>
+            <div id="leftjoy" class="mdc-button  mdc-button--outlined">
+                <span id="joybar"></span>
+                <span id="centerP"></span>
+            </div>
+            <input type="text" placeholder="Active Keyboard" id="keyboard">
+
+        </div>
+
+        <script src="./func.js"></script>
+    </body>
+</html>
