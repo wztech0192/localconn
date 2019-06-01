@@ -5,7 +5,7 @@ Control your PC's keyboard, mouse, and cmd via the browser dashboard! The connec
 * .Net Framework
 * Modern Browser
 
-## Usage
+## How to Use
 1. Run Local Conn.exe
 2. Copy the provided ip address
 3. Open localconn.html
