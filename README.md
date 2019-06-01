@@ -9,5 +9,5 @@ Control your PC's keyboard, mouse, and cmd via the browser dashboard! The connec
 1. Run Local Conn.exe
 2. Copy the provided ip address
 3. Open localconn.html
-4. Paste ip address and click toggle connect
-5. Control your PC!.
+4. click "toggle connect" button and paste the provided ip address!
+5. Control your PC!
